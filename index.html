@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Literary Terms Masterclass</title>
+    <style>
+        :root {
+            --bg-cream: #F9F6F0;
+            --card-cream: #FFFFFF;
+            --dark-green: #1B4332;
+            --accent-green: #2D6A4F;
+            --text-black: #1A1A1A;
+            --text-muted: #4A4A4A;
+            --border-color: #D8D0C1;
+            --shadow: 0 10px 25px rgba(27, 67, 50, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-cream);
+            color: var(--text-black);
+            font-family: 'Georgia', 'Times New Roman', serif;
+            line-height: 1.6;
+            padding: 2rem 1rem;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 2px solid var(--dark-green);
+        }
+
+        h1, h2, h3, .italic-heading {
+            font-style: italic;
+            color: var(--dark-green);
+            font-weight: 700;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        p.subtitle {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            color: var(--text-muted);
+            font-size: 1rem;
+            font-style: italic;
+        }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            background: var(--card-cream);
+            padding: 1rem 1.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        select, button {
+            font-family: inherit;
+            font-size: 0.95rem;
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid var(--dark-green);
+        }
+
+        select {
+            background-color: var(--bg-cream);
+            color: var(--dark-green);
+            font-weight: 600;
+            outline: none;
+        }
+
+        .progress-text {
+            font-weight: 600;
+            color: var(--dark-green);
+        }
+
+        /* Flashcard */
+        .flashcard-area {
+            perspective: 1000px;
+            min-height: 440px;
+            margin-bottom: 1.5rem;
+        }
+
+        .card {
+            width: 100%;
+            height: 100%;
+            min-height: 440px;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            cursor: pointer;
+        }
+
+        .card.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            background-color: var(--card-cream);
+            border: 2px solid var(--dark-green);
+            border-radius: 12px;
+            padding: 2.5rem;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .card-front {
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .card-back {
+            transform: rotateY(180deg);
+            text-align: left;
+        }
+
+        .category-badge {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--bg-cream);
+            background-color: var(--accent-green);
+            padding: 4px 12px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+
+        .card-term {
+            font-size: 2.5rem;
+            font-style: italic;
+            color: var(--dark-green);
+        }
+
+        .flip-hint {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 2rem;
+            font-style: italic;
+        }
+
+        .back-title {
+            font-size: 1.8rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .definition-section {
+            margin-bottom: 1.2rem;
+        }
+
+        .definition-section h4 {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--accent-green);
+            margin-bottom: 0.2rem;
+            font-style: normal;
+        }
+
+        .definition-text {
+            font-size: 1.05rem;
+            color: var(--text-black);
+        }
+
+        .analysis-text {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        /* Elaborate Box */
+        .example-box {
+            display: none;
+            background-color: #EBF2ED;
+            border-left: 4px solid var(--dark-green);
+            padding: 0.8rem 1.2rem;
+            border-radius: 0 4px 4px 0;
+            margin-top: 1rem;
+            font-size: 0.95rem;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .example-box.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Navigation & Actions */
+        .action-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 3rem;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background-color: var(--dark-green);
+            color: var(--bg-cream);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--accent-green);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: var(--dark-green);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--dark-green);
+            color: var(--bg-cream);
+        }
+
+        .btn-know {
+            background-color: #2D6A4F;
+            color: white;
+            border-color: #2D6A4F;
+        }
+
+        .btn-know.mastered {
+            background-color: var(--border-color);
+            color: var(--text-muted);
+            border-color: var(--border-color);
+        }
+
+        /* Active Vocabulary List */
+        .vocab-section {
+            background-color: var(--card-cream);
+            border: 2px solid var(--dark-green);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .vocab-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .vocab-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .vocab-item {
+            background-color: var(--bg-cream);
+            border: 1px solid var(--border-color);
+            padding: 1rem;
+            border-radius: 6px;
+        }
+
+        .vocab-item h4 {
+            font-size: 1.1rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .vocab-item p {
+            font-size: 0.85rem;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            color: var(--text-muted);
+        }
+
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            font-style: italic;
+            color: var(--text-muted);
+            padding: 2rem 0;
+        }
+
+        @media (max-width: 600px) {
+            .action-bar { flex-direction: column; align-items: stretch; }
+            .btn-group { justify-content: space-between; }
+            .card-face { padding: 1.5rem; }
+            .card-term { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Literary Terms Masterclass</h1>
+        <p class="subtitle">Toolkit for novel analysis & essay discussions.</p>
+    </header>
+
+    <div class="controls">
+        <div>
+            <label for="categoryFilter" style="font-weight: 600; margin-right: 0.5rem; color: var(--dark-green); font-family: -apple-system, sans-serif;">Filter by Concept:</label>
+            <select id="categoryFilter" onchange="filterCategory()">
+                <option value="All">All Terms</option>
+                <option value="Core Fundamentals">Core Fundamentals</option>
+                <option value="Characterization">Characterization</option>
+                <option value="Narrative Perspective">Narrative Perspective</option>
+                <option value="Structure & Plot">Structure & Plot</option>
+                <option value="Style & Devices">Style & Devices</option>
+                <option value="Social & Ideological Context">Social & Ideological Context</option>
+            </select>
+        </div>
+        <div class="progress-text" id="progressTracker">Card 1 / X</div>
+    </div>
+
+    <div class="flashcard-area">
+        <div class="card" id="flashcard" onclick="flipCard(event)">
+            <!-- Front of Card -->
+            <div class="card-face card-front">
+                <span class="category-badge" id="cardCategory">Category</span>
+                <h2 class="card-term" id="cardTerm">Term</h2>
+                <div class="flip-hint">Click card to reveal definition & elaboration</div>
+            </div>
+
+            <!-- Back of Card -->
+            <div class="card-face card-back">
+                <h2 class="back-title italic-heading" id="backTerm">Term</h2>
+                
+                <div class="definition-section">
+                    <h4>Definition</h4>
+                    <p class="definition-text" id="cardDefinition">Definition text.</p>
+                </div>
+
+                <div class="definition-section">
+                    <h4>Analytical Focus</h4>
+                    <p class="analysis-text" id="cardAnalysis">Analysis text.</p>
+                </div>
+
+                <div class="example-box" id="exampleBox">
+                    <h4 style="color: var(--dark-green); margin-bottom: 0.2rem;">Elaborate:</h4>
+                    <p id="cardExample" style="font-size: 0.9rem; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;">Example text.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="action-bar">
+        <div class="btn-group">
+            <button class="btn-outline" onclick="prevCard()">← Previous</button>
+            <button class="btn-primary" onclick="nextCard()">Next Card →</button>
+        </div>
+        <div class="btn-group">
+            <button class="btn-outline" onclick="toggleExample(event)">Elaborate 💡</button>
+            <button class="btn-know" id="knowBtn" onclick="markAsKnown(event)">I Know This ✓</button>
+        </div>
+    </div>
+
+    <section class="vocab-section">
+        <div class="vocab-header">
+            <h2>Active Vocabulary</h2>
+            <span class="progress-text" id="vocabCount">0 Mastered</span>
+        </div>
+        <div class="vocab-grid" id="vocabGrid">
+            <div class="empty-state">Your mastered terms will appear here for easy reference during writing.</div>
+        </div>
+    </section>
+</div>
+
+<script>
+    const allTerms = [
+        // Core Fundamentals
+        { 
+            category: "Core Fundamentals", 
+            term: "Protagonist", 
+            def: "The central character in a story who drives the plot forward and whose goals or internal conflicts form the heart of the narrative.", 
+            analysis: "Examines how the character's desires and choices propel the action and reflect the novel's central values.", 
+            ex: "In a typical novel about political upheaval, the protagonist is an ordinary citizen whose personal desire for safety or justice forces them to confront a corrupt governing system." 
+        },
+        { 
+            category: "Core Fundamentals", 
+            term: "Antagonist", 
+            def: "The character, group, force, or institutional structure that opposes the protagonist and creates central conflict.", 
+            analysis: "Analyzes what ideological values or social forces the opposing threat embodies.", 
+            ex: "An antagonist does not have to be a single villain; it can be a rigid legal code, social prejudice, or an authoritarian state apparatus standing in the protagonist's way." 
+        },
+        { 
+            category: "Core Fundamentals", 
+            term: "Plot", 
+            def: "The structured sequence of events that make up the story, organized around a cause-and-effect relationship.", 
+            analysis: "Tracks how key plot choices build tension, reveal character, and resolve major conflicts.", 
+            ex: "Plot is not merely a list of events ('this happened, then that happened'); it is the causal chain where one character choice directly triggers the next crisis." 
+        },
+        { 
+            category: "Core Fundamentals", 
+            term: "Theme", 
+            def: "The underlying message, central idea, or universal statement about human nature, society, or ethics that the novel explores.", 
+            analysis: "Evaluates what the text ultimately argues about a specific topic rather than just naming the topic itself.", 
+            ex: "If a novel deals with the topic of revolution, the theme might be 'violent uprisings often replace one corrupt elite with another.'" 
+        },
+        { 
+            category: "Core Fundamentals", 
+            term: "Conflict", 
+            def: "The primary struggle between opposing forces that drives the narrative (e.g., person vs. self, person vs. society, person vs. nature).", 
+            analysis: "Pinpoints whether the novel's main tension is internal (psychological) or external (systemic, interpersonal, physical).", 
+            ex: "A character facing unjust imprisonment experiences external conflict with the state; a character doubting their own courage experiences internal conflict." 
+        },
+        { 
+            category: "Core Fundamentals", 
+            term: "Setting", 
+            def: "The specific time, physical location, historical era, and social environment in which the story takes place.", 
+            analysis: "Explores how the environment shapes character options, creates mood, and reflects social rules.", 
+            ex: "A novel set in an impoverished mining town during an economic depression creates strict financial constraints that dictate every character's choices." 
+        },
+        { 
+            category: "Core Fundamentals", 
+            term: "Tone", 
+            def: "The author’s or narrator’s attitude toward the subject matter, characters, or reader, conveyed through stylistic choices.", 
+            analysis: "Identifies whether the narrative stance is sympathetic, cynical, detached, critical, or nostalgic.", 
+            ex: "An author might describe a tragic social injustice using a cold, clinical tone to emphasize the chilling bureaucratic indifference of the authorities." 
+        },
+        { 
+            category: "Core Fundamentals", 
+            term: "Mood", 
+            def: "The emotional atmosphere or feeling created within the reader through descriptive language, setting, and imagery.", 
+            analysis: "Tracks how emotional states (e.g., claustrophobia, dread, warmth, melancholy) shift across scenes.", 
+            ex: "Describing a crowded, smoke-filled tenement with flickering gas lamps establishes an oppressive, claustrophobic mood for the reader." 
+        },
+
+        // Characterization
+        { 
+            category: "Characterization", 
+            term: "Direct Characterization", 
+            def: "The narrator or author explicitly states a character's physical traits, personality, or moral standing.", 
+            analysis: "Evaluates how straightforward narrative statements establish baseline expectations for a character.", 
+            ex: "When a narrator opens a chapter by stating, 'Mr. Henderson was a deeply prejudiced man who valued profit above human life,' that is direct characterization." 
+        },
+        { 
+            category: "Characterization", 
+            term: "Indirect Characterization", 
+            def: "The author reveals a character's nature implicitly through their dialogue, thoughts, actions, appearance, and interactions with others.", 
+            analysis: "Requires reading between the lines to interpret what a character's behavior reveals about their true motives.", 
+            ex: "Instead of calling a character generous, an author shows them secretly sharing their meager rations with a starving neighbor during a famine." 
+        },
+        { 
+            category: "Characterization", 
+            term: "Dynamic Character", 
+            def: "A character who undergoes significant internal change, psychological growth, or moral transformation throughout the story.", 
+            analysis: "Analyzes the specific catalysts that cause the character's worldview to shift.", 
+            ex: "A politically naive citizen who starts the novel believing in government benevolence, but becomes a radical activist after witnessing state brutality." 
+        },
+        { 
+            category: "Characterization", 
+            term: "Static Character", 
+            def: "A character who remains essentially unchanged in personality, values, or outlook from the beginning to the end of the text.", 
+            analysis: "Explores whether their resistance to change represents steadfast principle, stubbornness, or structural limitation.", 
+            ex: "A corrupt dictator who remains entirely unrepentant and cruel from the first chapter to the last is a static character." 
+        },
+        { 
+            category: "Characterization", 
+            term: "Character Foil", 
+            def: "A character whose traits directly contrast with another character’s (usually the protagonist's) to highlight specific qualities of both.", 
+            analysis: "Analyzes how contrasting moral choices, backgrounds, or attitudes emphasize key thematic points.", 
+            ex: "A cautious, rule-abiding bureaucrat acts as a foil to a reckless, rebellious protagonist, highlighting the different ways individuals respond to tyranny." 
+        },
+        { 
+            category: "Characterization", 
+            term: "Archetype", 
+            def: "A universal character type, symbol, or plot pattern that recurs across literature and mythology.", 
+            analysis: "Evaluates whether an author embraces or subverts familiar cultural expectations.", 
+            ex: "The 'Wise Mentor' or the 'Rebellious Outcast' are classic character archetypes found across many literary traditions." 
+        },
+        { 
+            category: "Characterization", 
+            term: "Anti-Hero", 
+            def: "A protagonist who lacks traditional heroic qualities (such as nobility, idealism, or selflessness) yet remains the central figure of the narrative.", 
+            analysis: "Examines societal disillusionment, moral complexity, or structural corruption.", 
+            ex: "A protagonist who lies, steals, and is deeply cynical, but whose survival in a corrupt world still engages the reader's sympathy." 
+        },
+        { 
+            category: "Characterization", 
+            term: "Bildungsroman", 
+            def: "A coming-of-age narrative tracking a protagonist's moral, psychological, or spiritual growth from youth to maturity.", 
+            analysis: "Explores the friction between individual identity formation and social expectations.", 
+            ex: "A novel tracking a young protagonist's journey from innocent childhood through harsh economic hardship into politically awakened adulthood." 
+        },
+
+        // Narrative Perspective
+        { 
+            category: "Narrative Perspective", 
+            term: "First-Person Narrator", 
+            def: "The story is told directly by a character within the narrative using 'I' or 'we.'", 
+            analysis: "Examines how personal bias, limited knowledge, or emotional blind spots shape the telling of events.", 
+            ex: "Because the narrator uses 'I', the reader is restricted entirely to that character's personal observations, which may be biased or incomplete." 
+        },
+        { 
+            category: "Narrative Perspective", 
+            term: "Third-Person Omniscient", 
+            def: "An all-knowing narrator outside the story who can access the thoughts, feelings, and actions of all characters.", 
+            analysis: "Analyzes how direct commentary, shifts between locations, and dramatic irony are used by the author.", 
+            ex: "The narrator knows what the protagonist is planning in secret, but also reveals the trap the police are setting across town." 
+        },
+        { 
+            category: "Narrative Perspective", 
+            term: "Third-Person Limited", 
+            def: "A narrator who sits outside the action but closely tracks the thoughts, feelings, and experiences of a single character.", 
+            analysis: "Balances narrative distance with deep psychological intimacy with one character.", 
+            ex: "The narrator refers to the protagonist as 'she', but the reader only gets access to that specific character's internal thoughts and fears." 
+        },
+        { 
+            category: "Narrative Perspective", 
+            term: "Unreliable Narrator", 
+            def: "A narrator whose account of events cannot be trusted fully due to youth, mental state, bias, deceit, or trauma.", 
+            analysis: "Forces the reader to separate objective reality from the narrator's distorted perspective.", 
+            ex: "A narrator who insists they are a peaceful citizen while describing violent actions that contradict their own peaceful claims." 
+        },
+        { 
+            category: "Narrative Perspective", 
+            term: "Free Indirect Discourse", 
+            def: "A technique where a third-person narrator temporarily adopts the internal voice, vocabulary, and rhythm of a character without using explicit tags (e.g., 'she thought').", 
+            analysis: "Blurs the line between objective narration and subjective internal thought.", 
+            ex: "Writing: 'The rent was due tomorrow. How would she ever pay it?' blending third-person description with the character's direct panic." 
+        },
+        { 
+            category: "Narrative Perspective", 
+            term: "Focalization", 
+            def: "The perspective or 'lens' through which narrative information is filtered in a given scene.", 
+            analysis: "Clarifies the distinction between *who sees* an event and *who speaks* the narration.", 
+            ex: "A third-person narrator describes a protest march, but all sensory details are filtered through the frightened eyes of a child hiding in a doorway." 
+        },
+
+        // Structure & Plot
+        { 
+            category: "Structure & Plot", 
+            term: "Exposition", 
+            def: "The foundational background information provided early in the novel regarding setting, characters, and history.", 
+            analysis: "Assesses how efficiently the world-building and baseline stakes are established.", 
+            ex: "The opening chapters that explain the history of a long-running political conflict before the main action begins." 
+        },
+        { 
+            category: "Structure & Plot", 
+            term: "Climax", 
+            def: "The ultimate turning point or moment of highest dramatic tension in the plot where the central conflict reaches its peak.", 
+            analysis: "Evaluates the decisive choice or revelation that determines the outcome of the narrative.", 
+            ex: "The final courtroom confrontation or violent standoff where the central dispute of the novel must be resolved." 
+        },
+        { 
+            category: "Structure & Plot", 
+            term: "Resolution (Denouement)", 
+            def: "The final section where loose plot ends are tied up and the outcome of the climax is processed.", 
+            analysis: "Evaluates whether the ending offers complete restoration, partial change, or ambiguous frustration.", 
+            ex: "The concluding chapter showing the surviving characters beginning to rebuild after a major political upheaval." 
+        },
+        { 
+            category: "Structure & Plot", 
+            term: "Linear Structure", 
+            def: "A narrative that presents events in chronological order from beginning to end.", 
+            analysis: "Emphasizes clear cause-and-effect relationships over time.", 
+            ex: "A story that begins in youth, proceeds through adulthood, and ends in old age without time jumps." 
+        },
+        { 
+            category: "Structure & Plot", 
+            term: "Non-Linear Structure", 
+            def: "A narrative that jumps across time using flashbacks, repeating loops, or fragmented scenes.", 
+            analysis: "Mirrors psychological trauma, memory decay, or challenges conventional timelines.", 
+            ex: "A novel that opens with an older character reflecting on a past war, then jumps back twenty years to explain how the trauma started." 
+        },
+        { 
+            category: "Structure & Plot", 
+            term: "Frame Narrative", 
+            def: "A 'story within a story' structure where an outer narrative sets the stage for an inner narrative.", 
+            analysis: "Adds layers of distance, historical context, or debate over reliability.", 
+            ex: "A novel beginning with someone finding an old manuscript in an archive; the rest of the book is the story written inside." 
+        },
+        { 
+            category: "Structure & Plot", 
+            term: "In Media Res", 
+            def: "Beginning a scene or story in the middle of crucial action rather than at the chronological start.", 
+            analysis: "Engages the reader immediately while creating suspense around prior events.", 
+            ex: "A novel opening with a character already fleeing from police custody before explaining the political conspiracy behind the arrest." 
+        },
+        { 
+            category: "Structure & Plot", 
+            term: "Foreshadowing", 
+            def: "Hints or subtle clues dropped early in the text that signal events to come.", 
+            analysis: "Creates structural unity, emotional suspense, or a sense of inevitability.", 
+            ex: "A character mentioning an ominous storm approaching in chapter one, hinting at social unrest or a riot later in the plot." 
+        },
+        { 
+            category: "Structure & Plot", 
+            term: "Pacing", 
+            def: "The speed at which the author moves the plot forward through scene length, summary, or rapid dialogue.", 
+            analysis: "Controls tension and highlights which plot points carry the most importance.", 
+            ex: "Using short, rapid-fire dialogue exchanges to speed up pacing during an escape or confrontation scene." 
+        },
+
+        // Style & Devices
+        { 
+            category: "Style & Devices", 
+            term: "Diction", 
+            def: "The author’s deliberate choice of vocabulary (e.g., formal, colloquial, poetic, technical, harsh).", 
+            analysis: "Reveals character background, social class, narrative distance, and tone.", 
+            ex: "An author using cold, bureaucratic legal jargon to describe an eviction to emphasize institutional heartlessness." 
+        },
+        { 
+            category: "Style & Devices", 
+            term: "Symbolism", 
+            def: "An object, person, setting, or action that represents a larger, abstract idea beyond its literal meaning.", 
+            analysis: "Connects concrete narrative elements to broader thematic arguments.", 
+            ex: "A crumbling bridge acting as a symbol for failing political negotiations and social division." 
+        },
+        { 
+            category: "Style & Devices", 
+            term: "Motif", 
+            def: "A recurring image, symbol, phrase, or situation that helps build and reinforce a novel’s central theme.", 
+            analysis: "Tracks how a repeating element gains deeper meaning across different parts of the novel.", 
+            ex: "The constant, repeating mention of locked doors throughout a novel about political censorship and lack of freedom." 
+        },
+        { 
+            category: "Style & Devices", 
+            term: "Dramatic Irony", 
+            def: "A situation where the reader knows key facts that the characters within the novel do not.", 
+            analysis: "Builds suspense, tragic momentum, or comedic distance.", 
+            ex: "The reader knows the government document has been forged, but the protagonist trusts it completely." 
+        },
+        { 
+            category: "Style & Devices", 
+            term: "Situational Irony", 
+            def: "An event or outcome that directly contradicts what was logically expected by characters or readers.", 
+            analysis: "Highlights human hypocrisy, unpredictable fate, or flawed expectations.", 
+            ex: "A politician who campaigns entirely on anti-corruption laws is arrested for bribery on election night." 
+        },
+        { 
+            category: "Style & Devices", 
+            term: "Verbal Irony", 
+            def: "A statement where a character or narrator says one thing but means the exact opposite (often used as sarcasm).", 
+            analysis: "Reveals underlying hostility, humor, or critical commentary.", 
+            ex: "Saying 'What a brilliant decision!' when a government policy causes immediate economic disaster." 
+        },
+        { 
+            category: "Style & Devices", 
+            term: "Allegory", 
+            def: "A sustained narrative in which characters, settings, and events function as symbolic representations of real-world political, historical, or moral concepts.", 
+            analysis: "Assesses how fiction critiques abstract real-world ideas or political systems.", 
+            ex: "A story about farm animals overthrowing their farmer that serves as an allegory for a real political revolution." 
+        },
+        { 
+            category: "Style & Devices", 
+            term: "Metonymy", 
+            def: "A figure of speech where a related physical object, location, or concept represents a larger institution or entity.", 
+            analysis: "Condenses institutional power into a singular, recognizable symbol.", 
+            ex: "Using the phrase 'The White House' to refer to the entire executive branch of government." 
+        },
+        { 
+            category: "Style & Devices", 
+            term: "Synecdoche", 
+            def: "A figure of speech where a *part* of something is used to represent the *whole*, or vice versa.", 
+            analysis: "Emphasizes specific traits or reduces individuals to specific functions within a system.", 
+            ex: "Referring to industrial workers as 'factory hands' uses a body part to represent the entire person." 
+        },
+        { 
+            category: "Style & Devices", 
+            term: "Subtext", 
+            def: "The unspoken, underlying meaning, desire, or tension beneath the literal words of dialogue or action.", 
+            analysis: "Uncovers repressed emotion, social taboos, or hidden motives in character interactions.", 
+            ex: "Two characters discussing weather patterns politely, while their tense body language reveals they are hiding from authorities." 
+        },
+
+        // Social & Ideological Context
+        { 
+            category: "Social & Ideological Context", 
+            term: "Microcosm", 
+            def: "A small, localized setting or community that reflects the power dynamics, conflicts, or flaws of society as a whole.", 
+            analysis: "Explores how large geopolitical or cultural issues play out on a small scale.", 
+            ex: "A single corporate office where cutthroat office politics mirror the ruthless competition of global capitalism." 
+        },
+        { 
+            category: "Social & Ideological Context", 
+            term: "Paternalism", 
+            def: "A system or mindset where an authority figure limits the freedom of subordinates under the claim of acting in their 'best interest.'", 
+            analysis: "Evaluates how novels critique unequal power structures framed as benevolence.", 
+            ex: "A colonial administration claiming they must restrict local voting rights to 'protect' citizens from their own inexperience." 
+        },
+        { 
+            category: "Social & Ideological Context", 
+            term: "Sentimentalism / Melodrama", 
+            def: "A literary style that deliberately emphasizes heightened emotional appeal, moral binaries (good vs. evil), and tragedy to move the audience.", 
+            analysis: "Examines how authors use emotional persuasion to drive moral arguments or social reform.", 
+            ex: "Writing an intensely emotional deathbed scene of an exploited child worker to make readers demand labor reform." 
+        }
+    ];
+
+    let filteredTerms = [...allTerms];
+    let currentIndex = 0;
+    let knownTerms = new Set();
+
+    function init() {
+        const saved = localStorage.getItem('literaryVocab');
+        if (saved) {
+            knownTerms = new Set(JSON.parse(saved));
+        }
+        updateCard();
+        renderVocab();
+    }
+
+    function filterCategory() {
+        const cat = document.getElementById('categoryFilter').value;
+        if (cat === 'All') {
+            filteredTerms = [...allTerms];
+        } else {
+            filteredTerms = allTerms.filter(t => t.category === cat);
+        }
+        currentIndex = 0;
+        updateCard();
+    }
+
+    function updateCard() {
+        if (filteredTerms.length === 0) return;
+        const current = filteredTerms[currentIndex];
+        
+        document.getElementById('flashcard').classList.remove('flipped');
+        document.getElementById('exampleBox').classList.remove('active');
+
+        document.getElementById('cardCategory').textContent = current.category;
+        document.getElementById('cardTerm').textContent = current.term;
+
+        document.getElementById('backTerm').textContent = current.term;
+        document.getElementById('cardDefinition').textContent = current.def;
+        document.getElementById('cardAnalysis').textContent = current.analysis;
+        document.getElementById('cardExample').textContent = current.ex;
+
+        document.getElementById('progressTracker').textContent = `Card ${currentIndex + 1} / ${filteredTerms.length}`;
+
+        const btn = document.getElementById('knowBtn');
+        if (knownTerms.has(current.term)) {
+            btn.textContent = "Mastered ✓";
+            btn.classList.add('mastered');
+        } else {
+            btn.textContent = "I Know This ✓";
+            btn.classList.remove('mastered');
+        }
+    }
+
+    function flipCard(e) {
+        if(e.target.tagName === 'BUTTON') return;
+        document.getElementById('flashcard').classList.toggle('flipped');
+    }
+
+    function toggleExample(e) {
+        e.stopPropagation();
+        document.getElementById('exampleBox').classList.toggle('active');
+        document.getElementById('flashcard').classList.add('flipped');
+    }
+
+    function nextCard() {
+        currentIndex = (currentIndex + 1) % filteredTerms.length;
+        updateCard();
+    }
+
+    function prevCard() {
+        currentIndex = (currentIndex - 1 + filteredTerms.length) % filteredTerms.length;
+        updateCard();
+    }
+
+    function markAsKnown(e) {
+        e.stopPropagation();
+        const term = filteredTerms[currentIndex].term;
+        if (knownTerms.has(term)) {
+            knownTerms.delete(term);
+        } else {
+            knownTerms.add(term);
+        }
+        localStorage.setItem('literaryVocab', JSON.stringify([...knownTerms]));
+        updateCard();
+        renderVocab();
+    }
+
+    function renderVocab() {
+        const grid = document.getElementById('vocabGrid');
+        document.getElementById('vocabCount').textContent = `${knownTerms.size} Mastered`;
+        
+        if (knownTerms.size === 0) {
+            grid.innerHTML = '<div class="empty-state">Your mastered terms will appear here for easy reference during writing.</div>';
+            return;
+        }
+
+        grid.innerHTML = '';
+        allTerms.forEach(item => {
+            if (knownTerms.has(item.term)) {
+                const div = document.createElement('div');
+                div.className = 'vocab-item';
+                div.innerHTML = `<h4 class="italic-heading">${item.term}</h4><p>${item.def}</p>`;
+                grid.appendChild(div);
+            }
+        });
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if (e.code === 'Space') {
+            e.preventDefault();
+            document.getElementById('flashcard').classList.toggle('flipped');
+        } else if (e.code === 'ArrowRight') {
+            nextCard();
+        } else if (e.code === 'ArrowLeft') {
+            prevCard();
+        }
+    });
+
+    window.onload = init;
+</script>
+
+</body>
+</html>
